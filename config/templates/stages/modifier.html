@@ -1,7 +1,14 @@
-<h1>Modifier stage</h1>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Modifier un stage</h2>
 
 <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Modifier</button>
+
+    <button class="btn btn-primary">Modifier</button>
 </form>
+
+{% endblock %}

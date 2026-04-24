@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 class Stage(models.Model):
@@ -10,3 +11,11 @@ class Stage(models.Model):
 
     def __str__(self):
         return self.titre
+
+class Candidature(models.Model):
+    stagiaire = models.ForeignKey(User, on_delete=models.CASCADE)
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
+    date_postulation = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.stagiaire.username} -> {self.stage.titre}"

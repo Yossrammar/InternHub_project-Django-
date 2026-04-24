@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Dashboard Société</h2>
+
+<a href="/ajouter/" class="btn btn-success mb-3">Ajouter Stage</a>
+
+<table class="table">
+    <tr>
+        <th>Titre</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for stage in stages %}
+    <tr>
+        <td>{{ stage.titre }}</td>
+        <td>
+            <a class="btn btn-warning btn-sm" href="/modifier/{{ stage.id }}/">Modifier</a>
+            <a class="btn btn-danger btn-sm" href="/supprimer/{{ stage.id }}/">Supprimer</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

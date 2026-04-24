@@ -1,3 +1,22 @@
-<h1>Bienvenue dans InternHub</h1>
+{% extends 'base.html' %}
 
-<a href="/stages/">Voir les stages</a>
+{% block content %}
+
+<div class="text-center mt-5">
+
+    <h1>Bienvenue sur InternHub 🚀</h1>
+    <p>Choisissez votre rôle :</p>
+
+    <div class="mt-4">
+        <a href="/stages/" class="btn btn-primary btn-lg m-2">
+            Stagiaire
+        </a>
+
+        <a href="/dashboard/" class="btn btn-success btn-lg m-2">
+            Société
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

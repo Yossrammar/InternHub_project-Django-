@@ -1,12 +1,45 @@
-<h1>Liste des stages</h1>
+{% extends 'base.html' %}
 
-<a href="/ajouter/">Ajouter un stage</a>
+{% block content %}
 
-{% for stage in stages %}
-    <li>
-        {{ stage.titre }} - {{ stage.entreprise }}
+<h2 class="mb-4">Liste des stages</h2>
 
-        <a href="/modifier/{{ stage.id }}/">Modifier</a>
-        <a href="/supprimer/{{ stage.id }}/">Supprimer</a>
-    </li>
-{% endfor %}
+<div class="row">
+
+    {% for stage in stages %}
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow p-3 h-100">
+
+            <h5 class="card-title">{{ stage.titre }}</h5>
+            <p><strong>Entreprise :</strong> {{ stage.entreprise }}</p>
+            <p>{{ stage.description }}</p>
+
+            <div class="mt-auto">
+
+                {% if user.is_staff %}
+                    <a class="btn btn-warning btn-sm" href="/modifier/{{ stage.id }}/">Modifier</a>
+
+                    <a class="btn btn-danger btn-sm"
+                       href="/supprimer/{{ stage.id }}/"
+                       onclick="return confirm('Supprimer ?')">
+                        Supprimer
+                    </a>
+
+                {% elif user.is_authenticated %}
+                    <a class="btn btn-success btn-sm"
+                       href="/postuler/{{ stage.id }}/">
+                        Postuler
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
