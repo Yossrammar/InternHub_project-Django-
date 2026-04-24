@@ -1,0 +1,12 @@
+<h1>Liste des stages</h1>
+
+<a href="/ajouter/">Ajouter un stage</a>
+
+{% for stage in stages %}
+    <li>
+        {{ stage.titre }} - {{ stage.entreprise }}
+
+        <a href="/modifier/{{ stage.id }}/">Modifier</a>
+        <a href="/supprimer/{{ stage.id }}/">Supprimer</a>
+    </li>
+{% endfor %}
