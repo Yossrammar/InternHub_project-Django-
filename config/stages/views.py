@@ -1,63 +1,18 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .models import Stage
+from django.contrib import messages
+
+from .models import Stage, Candidature
 from .forms import StageForm
-from django.contrib.auth import authenticate, login
 
 
-def liste_stages(request):
-    stages = Stage.objects.all()
-    return render(request, 'stages/liste.html', {'stages': stages})
-
-def ajouter_stage(request):
-    if request.method == "POST":
-        form = StageForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('liste_stages')
-    else:
-        form = StageForm()
-
-    return render(request, 'stages/ajouter.html', {'form': form})
-
-
-def modifier_stage(request, id):
-    stage = Stage.objects.get(id=id)
-
-    if request.method == "POST":
-        form = StageForm(request.POST, instance=stage)
-        if form.is_valid():
-            form.save()
-            return redirect('liste_stages')
-    else:
-        form = StageForm(instance=stage)
-
-    return render(request, 'stages/modifier.html', {'form': form})
-
-def supprimer_stage(request, id):
-    stage = Stage.objects.get(id=id)
-    stage.delete()
-    return redirect('liste_stages')
-
-
+# 🏠 HOME
 def home(request):
     return render(request, 'home.html')
 
-def dashboard(request):
-    stages = Stage.objects.all()
-    return render(request, 'stages/dashboard.html', {'stages': stages})
 
-
-
-@login_required
-def dashboard(request):
-    if not request.user.is_staff:
-        return redirect('home')
-    
-    stages = Stage.objects.all()
-    return render(request, 'stages/dashboard.html', {'stages': stages})
-
-
+# 🔐 LOGIN (redirige selon rôle)
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -65,41 +20,63 @@ def login_view(request):
 
         user = authenticate(request, username=username, password=password)
 
-        if user is not None:
+        if user:
             login(request, user)
 
-            # 🔥 redirection selon rôle
             if user.is_staff:
-                return redirect('dashboard')  # société
+                return redirect('dashboard')     # société
             else:
                 return redirect('liste_stages')  # stagiaire
+        else:
+            messages.error(request, "Login invalide ❌")
 
     return render(request, 'login.html')
 
-from django.contrib.auth.decorators import login_required
 
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Candidature, Stage
+# 🔓 LOGOUT
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
+
+# 👤 STAGIAIRE → voir stages
+@login_required
+def liste_stages(request):
+    if request.user.is_staff:
+        return redirect('dashboard')  # sécurité
+
+    stages = Stage.objects.all()
+    return render(request, 'stages/liste.html', {'stages': stages})
+
+
+# 📩 POSTULER
 @login_required
 def postuler_stage(request, id):
-    stage = Stage.objects.get(id=id)
+    if request.user.is_staff:
+        return redirect('dashboard')
 
-    # empêcher double candidature
+    stage = get_object_or_404(Stage, id=id)
+
     if not Candidature.objects.filter(stagiaire=request.user, stage=stage).exists():
-        Candidature.objects.create(
-            stagiaire=request.user,
-            stage=stage
-        )
+        Candidature.objects.create(stagiaire=request.user, stage=stage)
         messages.success(request, "Candidature envoyée ✅")
-
     else:
         messages.warning(request, "Déjà postulé ❗")
 
     return redirect('liste_stages')
 
 
+# 🏢 DASHBOARD SOCIÉTÉ
+@login_required
+def dashboard(request):
+    if not request.user.is_staff:
+        return redirect('liste_stages')
+
+    stages = Stage.objects.all()
+    return render(request, 'stages/dashboard.html', {'stages': stages})
+
+
+# 📊 VOIR CANDIDATURES
 @login_required
 def voir_candidatures(request):
     if not request.user.is_staff:
@@ -107,3 +84,54 @@ def voir_candidatures(request):
 
     candidatures = Candidature.objects.all()
     return render(request, 'stages/candidatures.html', {'candidatures': candidatures})
+
+
+# ➕ AJOUTER STAGE
+@login_required
+def ajouter_stage(request):
+    if not request.user.is_staff:
+        return redirect('home')
+
+    if request.method == "POST":
+        form = StageForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Stage ajouté ✅")
+            return redirect('dashboard')
+    else:
+        form = StageForm()
+
+    return render(request, 'stages/ajouter.html', {'form': form})
+
+
+# ✏️ MODIFIER STAGE
+@login_required
+def modifier_stage(request, id):
+    if not request.user.is_staff:
+        return redirect('home')
+
+    stage = get_object_or_404(Stage, id=id)
+
+    if request.method == "POST":
+        form = StageForm(request.POST, instance=stage)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Stage modifié ✅")
+            return redirect('dashboard')
+    else:
+        form = StageForm(instance=stage)
+
+    return render(request, 'stages/modifier.html', {'form': form})
+
+
+# ❌ SUPPRIMER STAGE
+@login_required
+def supprimer_stage(request, id):
+    if not request.user.is_staff:
+        return redirect('home')
+
+    stage = get_object_or_404(Stage, id=id)
+    stage.delete()
+    messages.success(request, "Stage supprimé ❌")
+
+    return redirect('dashboard')
