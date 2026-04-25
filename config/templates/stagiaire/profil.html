@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">👤 Mon Profil</h2>
+
+    <div class="card p-4 shadow">
+
+        <!-- 🔹 INFOS USER -->
+        <h5 class="mb-3">Informations du compte</h5>
+
+        <p><b>Username :</b> {{ user.username }}</p>
+        <p><b>Email :</b> {{ user.email }}</p>
+
+        <hr>
+
+        <!-- 🔹 INFOS STAGIAIRE -->
+        <h5 class="mb-3">Informations personnelles</h5>
+
+        <p><b>LinkedIn :</b>
+            <a href="{{ stagiaire.linkedin }}" target="_blank">
+                {{ stagiaire.linkedin }}
+            </a>
+        </p>
+
+        <p><b>GitHub :</b>
+            {% if stagiaire.github %}
+                <a href="{{ stagiaire.github }}" target="_blank">
+                    {{ stagiaire.github }}
+                </a>
+            {% else %}
+                <span class="text-muted">Non renseigné</span>
+            {% endif %}
+        </p>
+
+        <p><b>Date de naissance :</b> {{ stagiaire.date_naissance }}</p>
+
+        <p><b>Téléphone :</b> {{ stagiaire.telephone }}</p>
+
+        <hr>
+
+        <!-- 🔹 CV -->
+        <h5 class="mb-3">Mon CV</h5>
+
+        {% if stagiaire.cv %}
+            <a href="{{ stagiaire.cv.url }}" target="_blank" class="btn btn-primary">
+                📄 Voir mon CV
+            </a>
+        {% else %}
+            <p class="text-danger">Aucun CV uploadé</p>
+        {% endif %}
+
+        <hr>
+
+        <!-- 🔹 MODIFICATION DIRECTE (INLINE) -->
+        <h5 class="mb-3">Modifier mes informations</h5>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button class="btn btn-success">
+                💾 Sauvegarder
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

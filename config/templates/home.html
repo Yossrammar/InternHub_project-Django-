@@ -3,11 +3,22 @@
 {% block content %}
 
 <div class="text-center mt-5">
-    <h1>Bienvenue sur InternHub 🚀</h1>
-    <p>Choisissez votre rôle</p>
 
-    <a href="/login/" class="btn btn-primary m-2">Stagiaire</a>
-    <a href="/login/" class="btn btn-success m-2">Société</a>
+    <h2 class="mb-4">Bienvenue sur InternHub 🚀</h2>
+    <p class="text-muted mb-5">Choisissez votre rôle pour continuer</p>
+
+    <div class="d-flex justify-content-center gap-3">
+
+        <a href="{% url 'login_stagiaire' %}" class="btn btn-primary btn-lg">
+            👤 Stagiaire
+        </a>
+
+        <a href="{% url 'login_societe' %}" class="btn btn-dark btn-lg">
+            🏢 Société
+        </a>
+
+    </div>
+
 </div>
 
 {% endblock %}

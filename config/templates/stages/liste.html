@@ -5,24 +5,42 @@
 <h2>Offres de stages</h2>
 
 <div class="row">
+
 {% for stage in stages %}
 
 <div class="col-md-6 mb-3">
     <div class="card p-3 shadow">
 
         <h5>{{ stage.titre }}</h5>
-        <p><strong>Entreprise :</strong> {{ stage.entreprise }}</p>
         <p>{{ stage.description }}</p>
 
-        <!-- 👤 STAGIAIRE -->
-        {% if not user.is_staff %}
-            <a class="btn btn-success" href="/postuler/{{ stage.id }}/">Postuler</a>
+        <p><b>Localisation:</b> {{ stage.localisation }}</p>
+
+        {% if stage.est_paye %}
+            <p class="text-success">💰 Payé</p>
+        {% else %}
+            <p class="text-danger">❌ Non payé</p>
+        {% endif %}
+
+        {% if stage.id in candidatures_ids %}
+            <button class="btn btn-success" disabled>Déjà postulé</button>
+
+            <a href="{% url 'annuler_postulation' stage.id %}" class="btn btn-danger">
+                Annuler
+            </a>
+        {% else %}
+            <a href="{% url 'postuler_stage' stage.id %}"
+               onclick="return confirm('Confirmer la postulation ?')"
+               class="btn btn-primary">
+                Postuler
+            </a>
         {% endif %}
 
     </div>
 </div>
 
 {% endfor %}
+
 </div>
 
 {% endblock %}

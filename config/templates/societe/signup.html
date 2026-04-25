@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup Société</title>
+</head>
+<body>
+
+<h2>Inscription Société 🏢</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="text" name="username" placeholder="Username" required><br><br>
+    
+
+    {{ form.as_p }}
+
+    <button type="submit">S'inscrire</button>
+</form>
+
+<br>
+<a href="/societe/login/">Déjà un compte ?</a>
+
+</body>
+</html>

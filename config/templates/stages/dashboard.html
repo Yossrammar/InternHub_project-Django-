@@ -2,27 +2,77 @@
 
 {% block content %}
 
-<h2>Dashboard Société</h2>
+<div class="container">
 
-<a href="/ajouter/" class="btn btn-success mb-3">+ Ajouter Stage</a>
-<a href="/candidatures/" class="btn btn-info mb-3">Voir candidatures</a>
+    <h2 class="mb-4">Dashboard Société 🏢</h2>
 
-<table class="table">
-<tr>
-    <th>Titre</th>
-    <th>Actions</th>
-</tr>
+    <!-- 🔥 STATS -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow p-3 text-center">
+                <h5>📄 Mes Stages</h5>
+                <h2 class="text-primary">{{ stages_count }}</h2>
+            </div>
+        </div>
 
-{% for stage in stages %}
-<tr>
-    <td>{{ stage.titre }}</td>
-    <td>
-        <a href="/modifier/{{ stage.id }}/" class="btn btn-warning btn-sm">Modifier</a>
-        <a href="/supprimer/{{ stage.id }}/" class="btn btn-danger btn-sm">Supprimer</a>
-    </td>
-</tr>
-{% endfor %}
+        <div class="col-md-6">
+            <div class="card shadow p-3 text-center">
+                <h5>📩 Candidatures</h5>
+                <h2 class="text-success">{{ candidatures_count }}</h2>
+            </div>
+        </div>
+    </div>
 
-</table>
+    <!-- 🔥 ACTIONS -->
+    <div class="mb-4 d-flex gap-2">
+        <a href="{% url 'ajouter_stage' %}" class="btn btn-success">
+            + Ajouter Stage
+        </a>
+
+        <a href="{% url 'candidatures' %}" class="btn btn-primary">
+            Voir Candidatures
+        </a>
+    </div>
+
+    <!-- 🔥 TABLE -->
+    <div class="card shadow">
+        <div class="card-body">
+            <h5 class="mb-3">📋 Liste des stages</h5>
+
+            {% if stages %}
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for stage in stages %}
+                        <tr>
+                            <td>{{ stage.titre }}</td>
+                            <td>
+                                <a href="{% url 'modifier_stage' stage.id %}" class="btn btn-warning btn-sm">
+                                    Modifier
+                                </a>
+
+                                <a href="{% url 'supprimer_stage' stage.id %}"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Supprimer ce stage ?')">
+                                    Supprimer
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted">Aucun stage ajouté pour le moment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
 
 {% endblock %}

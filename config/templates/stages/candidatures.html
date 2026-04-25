@@ -2,24 +2,44 @@
 
 {% block content %}
 
-<h2>Liste des candidatures</h2>
+<h2 class="mb-4">Liste des candidatures 📩</h2>
 
-<table class="table table-striped">
-    <tr>
-        <th>Stagiaire</th>
-        <th>Email</th>
-        <th>Stage</th>
-        <th>Date</th>
-    </tr>
+{% if candidatures %}
 
-    {% for c in candidatures %}
-    <tr>
-        <td>{{ c.stagiaire.username }}</td>
-        <td>{{ c.stagiaire.email }}</td>
-        <td>{{ c.stage.titre }}</td>
-        <td>{{ c.date_postulation }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="card shadow">
+    <div class="card-body">
+
+        <table class="table table-bordered table-striped align-middle">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>Stagiaire</th>
+                    <th>Stage</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for c in candidatures %}
+                <tr>
+                    <td>{{ c.stagiaire.username }}</td>
+                    <td>{{ c.stage.titre }}</td>
+                    <td>{{ c.date|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+{% else %}
+
+<div class="alert alert-info">
+    Aucune candidature pour le moment.
+</div>
+
+{% endif %}
 
 {% endblock %}
